@@ -245,7 +245,7 @@ test('batches multiple requests', async (t) => {
   const graphqlServer = await createGraphqlServer({
     resolvers: {
       Foo: {
-        __lazyLoad: ({ id }) => {
+        __lazyLoad: ({id}) => {
           return fooLoader.load(id);
         },
       },

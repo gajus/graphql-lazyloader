@@ -33,7 +33,7 @@
     "dataloader": "^2.0.0",
     "del-cli": "^3.0.1",
     "eslint": "^7.13.0",
-    "eslint-config-canonical": "^24.4.2",
+    "eslint-config-canonical": "^24.4.3",
     "express": "^4.17.1",
     "graphql": "^15.4.0",
     "graphql-request": "^3.3.0",
