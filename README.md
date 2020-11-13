@@ -79,7 +79,7 @@ It is important to note that the above example assume that `getPerson` is implem
 
 According to the original authors, this pattern is better because:
 
-> * This code is easy to reason about. You know exactly where an [givenName] is fetched. This makes for easy debugging.
+> * This code is easy to reason about. You know exactly where [givenName] is fetched. This makes for easy debugging.
 > * This code is more testable. You don't have to test the [person] resolver when you really just wanted to test the [givenName] resolver.
 >
 > To some, the [getPerson] duplication might look like a code smell. But, having code that is simple, easy to reason about, and is more testable is worth a little bit of duplication.
