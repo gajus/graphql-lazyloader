@@ -55,7 +55,7 @@ const wrapLazyLoadableField = (field: GraphQLField<any, any>, object: GraphQLObj
 };
 
 export default class LazyLoaderSchemaDirective extends SchemaDirectiveVisitor {
-  public visitObject(object: GraphQLObjectType) {
+  public visitObject (object: GraphQLObjectType) {
     const fieldMap = object.getFields();
 
     for (const fieldName of Object.keys(fieldMap)) {
