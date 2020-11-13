@@ -8,6 +8,11 @@ import {
   GraphQLField,
   GraphQLObjectType,
 } from 'graphql';
+import Logger from '../Logger';
+
+const log = Logger.child({
+  namespace: 'LazyLoaderSchemaDirective',
+});
 
 const lazyLoaded = Symbol('LAZY_LOADED');
 
@@ -19,6 +24,8 @@ const wrapLazyLoadableField = (field: GraphQLField<any, any>, object: GraphQLObj
   if (!lazyLoad) {
     return;
   }
+
+  log.debug('decorating %s field on %s Object', field.name, object.name);
 
   const resolve = field.resolve || defaultFieldResolver;
 
@@ -55,7 +62,7 @@ const wrapLazyLoadableField = (field: GraphQLField<any, any>, object: GraphQLObj
 };
 
 export default class LazyLoaderSchemaDirective extends SchemaDirectiveVisitor {
-  public visitObject (object: GraphQLObjectType) {
+  public visitObject(object: GraphQLObjectType) {
     const fieldMap = object.getFields();
 
     for (const fieldName of Object.keys(fieldMap)) {
