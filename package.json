@@ -61,19 +61,6 @@
   "license": "BSD-3-Clause",
   "main": "./dist/index.js",
   "name": "graphql-lazyloader",
-  "nyc": {
-    "include": [
-      "src/**/*.js"
-    ],
-    "instrument": false,
-    "reporter": [
-      "text-lcov"
-    ],
-    "require": [
-      "@babel/register"
-    ],
-    "sourceMap": false
-  },
   "peerDependencies": {
     "@graphql-tools/utils": "^7.0.2",
     "graphql": "^15.4.0"
