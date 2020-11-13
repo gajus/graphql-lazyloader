@@ -17,12 +17,10 @@
   },
   "dependencies": {
     "@types/roarr": "^2.14.2",
-    "roarr": "^2.15.4",
-    "serialize-error": "^7.0.1"
+    "roarr": "^2.15.4"
   },
   "description": "GraphQL directive that adds Object-level data resolvers.",
   "devDependencies": {
-    "@ava/babel": "^1.0.1",
     "@graphql-tools/utils": "^7.0.2",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/http-terminator": "^2.0.1",
@@ -37,7 +35,6 @@
     "express": "^4.17.1",
     "graphql": "^15.4.0",
     "graphql-request": "^3.3.0",
-    "graphql-tools": "^7.0.1",
     "http-terminator": "^2.0.3",
     "husky": "^4.3.0",
     "lint-staged": "^10.5.1",
