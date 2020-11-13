@@ -1,0 +1,15 @@
+coverage
+dist
+node_modules
+*.log
+.*
+!.babelrc
+!.editorconfig
+!.eslintignore
+!.eslintrc
+!.gitignore
+!.lintstagedrc.js
+!.npmignore
+!.nycrc
+!.travis.yml
+/package-lock.json

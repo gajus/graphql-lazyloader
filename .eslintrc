@@ -1,0 +1,7 @@
+{
+  "extends": [
+    "canonical",
+    "canonical/typescript"
+  ],
+  "root": true
+}
