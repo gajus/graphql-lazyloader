@@ -170,3 +170,57 @@ test('respects the original resolver', async (t) => {
 
   await graphqlServer.stop();
 });
+
+test('does not fetch already available data', async (t) => {
+  const lazyLoad = sinon
+    .stub()
+    .throws();
+
+  const graphqlServer = await createGraphqlServer({
+    resolvers: {
+      Foo: {
+        __lazyLoad: lazyLoad,
+      },
+      Query: {
+        foo: () => {
+          return {
+            id: '1',
+            name: 'foo',
+          };
+        },
+      },
+    },
+    typeDefs: gql`
+      directive @lazyLoad on OBJECT
+
+      type Foo @lazyLoad {
+        id: ID!
+        name: String!
+      }
+
+      type Query {
+        foo: Foo!
+      }
+    `,
+  });
+
+  const response = await request(graphqlServer.url, gql`
+    {
+      foo {
+        id
+        name
+      }
+    }
+  `);
+
+  t.deepEqual(response, {
+    foo: {
+      id: '1',
+      name: 'foo',
+    },
+  });
+
+  await graphqlServer.stop();
+
+  t.is(lazyLoad.callCount, 0);
+});

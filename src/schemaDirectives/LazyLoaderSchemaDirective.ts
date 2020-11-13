@@ -23,6 +23,17 @@ const wrapLazyLoadableField = (field: GraphQLField<any, any>, object: GraphQLObj
   const resolve = field.resolve || defaultFieldResolver;
 
   field.resolve = async (node, args, context, info) => {
+    const currentValue = node[field.name];
+
+    if (currentValue !== undefined) {
+      return resolve(
+        node,
+        args,
+        context,
+        info,
+      );
+    }
+
     if (!node[lazyLoaded]) {
       node[lazyLoaded] = lazyLoad(
         node,
