@@ -1,6 +1,6 @@
 # graphql-lazyloader 🚠
 
-[![Travis build status](http://img.shields.io/travis/gajus/graphql-lazyloader/master.svg?style=flat-square)](https://travis-ci.org/gajus/graphql-lazyloader)
+[![Travis build status](https://img.shields.io/travis/com/gajus/graphql-lazyloader?style=flat-square)](https://travis-ci.com/gajus/graphql-lazyloader)
 [![Coveralls](https://img.shields.io/coveralls/gajus/graphql-lazyloader.svg?style=flat-square)](https://coveralls.io/github/gajus/graphql-lazyloader)
 [![NPM version](http://img.shields.io/npm/v/graphql-lazyloader.svg?style=flat-square)](https://www.npmjs.org/package/graphql-lazyloader)
 [![Canonical Code Style](https://img.shields.io/badge/code%20style-canonical-blue.svg?style=flat-square)](https://github.com/gajus/canonical)
