@@ -14,7 +14,7 @@ GraphQL directive that adds Object-level data resolvers.
 
 ## Motivation
 
-Several years ago I read [GraphQL Resolvers: Best Practices] (2018), an article written by PayPal team, that changed my view about where / when data resolution should happen.
+Several years ago I read [GraphQL Resolvers: Best Practices](https://medium.com/paypal-engineering/graphql-resolvers-best-practices-cd36fdbcef55) (2018), an article written by PayPal team, that changed my view about where / when data resolution should happen.
 
 Let's start with an example GraphQL schema:
 
