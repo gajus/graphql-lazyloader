@@ -84,7 +84,7 @@ According to the original authors, this pattern is better because:
 >
 > To some, the [getPerson] duplication might look like a code smell. But, having code that is simple, easy to reason about, and is more testable is worth a little bit of duplication.
 
-For this and other reasons, I became a fan of this pattern and have since implemented it in multiple projects. However, the particular implementation proposed by PayPal is pretty verbose. `graphql-lazyloader` abstracts the above logic into a single `@lazyLoad` directive and an Object-level `__lazyLoad` resolver (see [Usage Example](#usage-example)).
+For this and other reasons, I became a fan ❤️ of this pattern and have since implemented it in multiple projects. However, the particular implementation proposed by PayPal is pretty verbose. `graphql-lazyloader` abstracts the above logic into a single `@lazyLoad` directive and an Object-level `__lazyLoad` resolver (see [Usage Example](#usage-example)).
 
 ## Usage
 
