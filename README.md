@@ -1,4 +1,4 @@
-# graphql-lazyloader 🚠
+# graphql-lazyloader 🛋
 
 [![Travis build status](https://img.shields.io/travis/com/gajus/graphql-lazyloader?style=flat-square)](https://travis-ci.com/gajus/graphql-lazyloader)
 [![Coveralls](https://img.shields.io/coveralls/gajus/graphql-lazyloader.svg?style=flat-square)](https://coveralls.io/github/gajus/graphql-lazyloader)
