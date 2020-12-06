@@ -5,17 +5,10 @@ import express from 'express';
 import {
   createHttpTerminator,
 } from 'http-terminator';
-import {
-  LazyLoaderSchemaDirective,
-} from '../../src';
 
-export default async ({typeDefs, resolvers}) => {
+export default async ({schema}) => {
   const apolloServer = new ApolloServer({
-    resolvers,
-    schemaDirectives: {
-      lazyLoad: LazyLoaderSchemaDirective,
-    },
-    typeDefs,
+    schema,
   });
 
   const expressApp = express();

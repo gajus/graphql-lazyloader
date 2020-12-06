@@ -6,19 +6,19 @@ import DataLoader from 'dataloader';
 import request from 'graphql-request';
 import sinon from 'sinon';
 import createGraphqlServer from '../helpers/createGraphqlServer';
-import createSchemaWithDirective from '../helpers/createSchemaWithDirective';
+import createSchemaWithMiddleware from '../helpers/createSchemaWithMiddleware';
 
 test('fetches data using __lazyLoad directive', async (t) => {
-  const schema = createSchemaWithDirective({
-    resolvers: {
-      Foo: {
-        __lazyLoad: () => {
-          return {
-            id: '1',
-            name: 'foo',
-          };
-        },
+  const schema = createSchemaWithMiddleware({
+    lazyLoadMap: {
+      Foo: () => {
+        return {
+          id: '1',
+          name: 'foo',
+        };
       },
+    },
+    resolvers: {
       Query: {
         foo: () => {
           return {
@@ -71,11 +71,11 @@ test('caches fetched data', async (t) => {
       name: 'foo',
     });
 
-  const schema = createSchemaWithDirective({
+  const schema = createSchemaWithMiddleware({
+    lazyLoadMap: {
+      Foo: lazyLoad,
+    },
     resolvers: {
-      Foo: {
-        __lazyLoad: lazyLoad,
-      },
       Query: {
         foo: () => {
           return {
@@ -130,10 +130,12 @@ test('respects the original resolver', async (t) => {
       name: 'foo',
     });
 
-  const schema = createSchemaWithDirective({
+  const schema = createSchemaWithMiddleware({
+    lazyLoadMap: {
+      Foo: lazyLoad,
+    },
     resolvers: {
       Foo: {
-        __lazyLoad: lazyLoad,
         name: (node) => {
           return node.name.toUpperCase();
         },
@@ -187,11 +189,11 @@ test('does not fetch already available data', async (t) => {
     .stub()
     .throws();
 
-  const schema = createSchemaWithDirective({
+  const schema = createSchemaWithMiddleware({
+    lazyLoadMap: {
+      Foo: lazyLoad,
+    },
     resolvers: {
-      Foo: {
-        __lazyLoad: lazyLoad,
-      },
       Query: {
         foo: () => {
           return {
@@ -255,13 +257,13 @@ test('batches multiple requests', async (t) => {
 
   const fooLoader = new DataLoader(lazyLoad);
 
-  const schema = createSchemaWithDirective({
-    resolvers: {
-      Foo: {
-        __lazyLoad: ({id}) => {
-          return fooLoader.load(id);
-        },
+  const schema = createSchemaWithMiddleware({
+    lazyLoadMap: {
+      Foo: ({id}) => {
+        return fooLoader.load(id);
       },
+    },
+    resolvers: {
       Query: {
         foos: () => {
           return [

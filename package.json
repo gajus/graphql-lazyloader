@@ -34,6 +34,7 @@
     "eslint-config-canonical": "^24.4.3",
     "express": "^4.17.1",
     "graphql": "^15.4.0",
+    "graphql-middleware": "^4.0.2",
     "graphql-request": "^3.3.0",
     "http-terminator": "^2.0.3",
     "husky": "^4.3.0",
