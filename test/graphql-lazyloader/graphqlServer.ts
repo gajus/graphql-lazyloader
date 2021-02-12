@@ -21,6 +21,7 @@ test('test GraphQL server', async (t) => {
       }
     `,
   });
+
   const graphqlServer = await createGraphqlServer({
     schema,
   });

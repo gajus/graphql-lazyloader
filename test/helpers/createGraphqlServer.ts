@@ -6,7 +6,7 @@ import {
   createHttpTerminator,
 } from 'http-terminator';
 
-export default async ({schema}) => {
+export default async ({schema}: any) => {
   const apolloServer = new ApolloServer({
     schema,
   });
@@ -17,8 +17,8 @@ export default async ({schema}) => {
     app: expressApp,
   });
 
-  const httpServer = await new Promise((resolve) => {
-    // eslint-disable-next-line id-match
+  const httpServer: any = await new Promise((resolve) => {
+    // eslint-disable-next-line @typescript-eslint/naming-convention, id-match
     const httpServer_ = expressApp.listen(() => {
       resolve(httpServer_);
     });
