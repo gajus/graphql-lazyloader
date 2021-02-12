@@ -6,18 +6,19 @@ import DataLoader from 'dataloader';
 import request from 'graphql-request';
 import sinon from 'sinon';
 import createGraphqlServer from '../helpers/createGraphqlServer';
+import createSchemaWithMiddleware from '../helpers/createSchemaWithMiddleware';
 
-test('fetches data using __lazyLoad directive', async (t) => {
-  const graphqlServer = await createGraphqlServer({
-    resolvers: {
-      Foo: {
-        __lazyLoad: () => {
-          return {
-            id: '1',
-            name: 'foo',
-          };
-        },
+test('uses lazyLoadMap to lazy load the result', async (t) => {
+  const schema = createSchemaWithMiddleware({
+    lazyLoadMap: {
+      Foo: () => {
+        return {
+          id: '1',
+          name: 'foo',
+        };
       },
+    },
+    resolvers: {
       Query: {
         foo: () => {
           return {
@@ -27,9 +28,7 @@ test('fetches data using __lazyLoad directive', async (t) => {
       },
     },
     typeDefs: gql`
-      directive @lazyLoad on OBJECT
-
-      type Foo @lazyLoad {
+      type Foo {
         id: ID!
         name: String!
       }
@@ -38,6 +37,10 @@ test('fetches data using __lazyLoad directive', async (t) => {
         foo: Foo!
       }
     `,
+  });
+
+  const graphqlServer = await createGraphqlServer({
+    schema,
   });
 
   const response = await request(graphqlServer.url, gql`
@@ -67,11 +70,11 @@ test('caches fetched data', async (t) => {
       name: 'foo',
     });
 
-  const graphqlServer = await createGraphqlServer({
+  const schema = createSchemaWithMiddleware({
+    lazyLoadMap: {
+      Foo: lazyLoad,
+    },
     resolvers: {
-      Foo: {
-        __lazyLoad: lazyLoad,
-      },
       Query: {
         foo: () => {
           return {
@@ -81,9 +84,7 @@ test('caches fetched data', async (t) => {
       },
     },
     typeDefs: gql`
-      directive @lazyLoad on OBJECT
-
-      type Foo @lazyLoad {
+      type Foo {
         id: ID!
         name: String!
       }
@@ -94,8 +95,16 @@ test('caches fetched data', async (t) => {
     `,
   });
 
+  const graphqlServer = await createGraphqlServer({
+    schema,
+  });
+
   const response = await request(graphqlServer.url, gql`
     {
+      foo {
+        id
+        name
+      }
       foo {
         id
         name
@@ -123,11 +132,13 @@ test('respects the original resolver', async (t) => {
       name: 'foo',
     });
 
-  const graphqlServer = await createGraphqlServer({
+  const schema = createSchemaWithMiddleware({
+    lazyLoadMap: {
+      Foo: lazyLoad,
+    },
     resolvers: {
       Foo: {
-        __lazyLoad: lazyLoad,
-        name: (node) => {
+        name: (node: any) => {
           return node.name.toUpperCase();
         },
       },
@@ -140,9 +151,7 @@ test('respects the original resolver', async (t) => {
       },
     },
     typeDefs: gql`
-      directive @lazyLoad on OBJECT
-
-      type Foo @lazyLoad {
+      type Foo {
         id: ID!
         name: String!
       }
@@ -151,6 +160,10 @@ test('respects the original resolver', async (t) => {
         foo: Foo!
       }
     `,
+  });
+
+  const graphqlServer = await createGraphqlServer({
+    schema,
   });
 
   const response = await request(graphqlServer.url, gql`
@@ -177,11 +190,11 @@ test('does not fetch already available data', async (t) => {
     .stub()
     .throws();
 
-  const graphqlServer = await createGraphqlServer({
+  const schema = createSchemaWithMiddleware({
+    lazyLoadMap: {
+      Foo: lazyLoad,
+    },
     resolvers: {
-      Foo: {
-        __lazyLoad: lazyLoad,
-      },
       Query: {
         foo: () => {
           return {
@@ -192,9 +205,7 @@ test('does not fetch already available data', async (t) => {
       },
     },
     typeDefs: gql`
-      directive @lazyLoad on OBJECT
-
-      type Foo @lazyLoad {
+      type Foo {
         id: ID!
         name: String!
       }
@@ -203,6 +214,10 @@ test('does not fetch already available data', async (t) => {
         foo: Foo!
       }
     `,
+  });
+
+  const graphqlServer = await createGraphqlServer({
+    schema,
   });
 
   const response = await request(graphqlServer.url, gql`
@@ -242,13 +257,13 @@ test('batches multiple requests', async (t) => {
 
   const fooLoader = new DataLoader(lazyLoad);
 
-  const graphqlServer = await createGraphqlServer({
-    resolvers: {
-      Foo: {
-        __lazyLoad: ({id}) => {
-          return fooLoader.load(id);
-        },
+  const schema = createSchemaWithMiddleware({
+    lazyLoadMap: {
+      Foo: ({id}: any) => {
+        return fooLoader.load(id);
       },
+    },
+    resolvers: {
       Query: {
         foos: () => {
           return [
@@ -263,9 +278,7 @@ test('batches multiple requests', async (t) => {
       },
     },
     typeDefs: gql`
-      directive @lazyLoad on OBJECT
-
-      type Foo @lazyLoad {
+      type Foo {
         id: ID!
         name: String!
       }
@@ -274,6 +287,10 @@ test('batches multiple requests', async (t) => {
         foos: [Foo!]!
       }
     `,
+  });
+
+  const graphqlServer = await createGraphqlServer({
+    schema,
   });
 
   const response = await request(graphqlServer.url, gql`
@@ -300,7 +317,10 @@ test('batches multiple requests', async (t) => {
 
   await graphqlServer.stop();
 
-  t.deepEqual(lazyLoad.firstCall.firstArg, ['1', '2']);
+  t.deepEqual(lazyLoad.firstCall.firstArg, [
+    '1',
+    '2',
+  ]);
 
   t.is(lazyLoad.callCount, 1);
 });

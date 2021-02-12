@@ -84,15 +84,11 @@ According to the original authors, this pattern is better because:
 >
 > To some, the [getPerson] duplication might look like a code smell. But, having code that is simple, easy to reason about, and is more testable is worth a little bit of duplication.
 
-For this and other reasons, I became a fan ❤️ of this pattern and have since implemented it in multiple projects. However, the particular implementation proposed by PayPal is pretty verbose. `graphql-lazyloader` abstracts the above logic into a single `@lazyLoad` directive and an Object-level `__lazyLoad` resolver (see [Usage Example](#usage-example)).
+For this and other reasons, I became a fan ❤️ of this pattern and have since implemented it in multiple projects. However, the particular implementation proposed by PayPal is pretty verbose. `graphql-lazyloader` abstracts the above logic into a single [GraphQL middleware](https://github.com/maticzav/graphql-middleware) (see [Usage Example](#usage-example)).
 
 ## Usage
 
-1. Register `LazyLoaderSchemaDirective` schema directive class.
-1. Register `@lazyLoad` schema directive.
-1. Implement `__lazyLoad` method for data-types that implement `@lazyLoad`.
-
-Refer to Apollo [Using schema directives](https://www.apollographql.com/docs/apollo-server/schema/directives/) guide for additional guidance.
+`graphql-lazyloader` is added using `graphql-middleware`
 
 ### Usage Example
 
@@ -102,42 +98,55 @@ import {
   gql,
 } from 'apollo-server';
 import {
-  LazyLoaderSchemaDirective,
+  makeExecutableSchema,
+} from '@graphql-tools/schema';
+import {
+  applyMiddleware,
+} from 'graphql-middleware';
+import {
+  createLazyLoadMiddleware,
 } from 'graphql-lazyloader';
 
-const typeDefs = gql`
-  directive @lazyLoad on OBJECT
+const lazyLoadMiddleware = createLazyLoadMiddleware({
+  Person: ({id}) => {
+    return getPerson(id);
+  },
+});
 
+const typeDefs = gql`
   type Query {
     person(id: ID!): Person!
   }
 
-  type Person @lazyLoad {
+  type Person {
     id: ID!
     givenName: String!
     familyName: String!
   }
 `;
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers: {
-    Person: {
-      __lazyLoad: ({id}) => {
-        return getPerson(id);
-      },
-    },
-    Query: {
-      person: () => {
-        return {
-          id: '1',
-        };
-      },
+const resolvers = {
+  Query: {
+    person: () => {
+      return {
+        id: '1',
+      };
     },
   },
-  schemaDirectives: {
-    lazyLoad: LazyLoaderSchemaDirective
-  }
+};
+
+const schema = makeExecutableSchema({
+  resolvers,
+  typeDefs,
+});
+
+const schemaWithMiddleware = applyMiddleware(
+  schema,
+  lazyLoadMiddleware,
+);
+
+const server = new ApolloServer({
+  schema: schemaWithMiddleware,
 });
 
 ```

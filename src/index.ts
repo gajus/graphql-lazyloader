@@ -1,5 +1,3 @@
-// @flow
-
 export {
-  LazyLoaderSchemaDirective,
-} from './schemaDirectives';
+  createLazyLoadMiddleware,
+} from './factories';

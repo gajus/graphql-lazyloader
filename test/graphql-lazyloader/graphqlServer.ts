@@ -1,12 +1,13 @@
 import {
   gql,
+  makeExecutableSchema,
 } from 'apollo-server-express';
 import test from 'ava';
 import request from 'graphql-request';
 import createGraphqlServer from '../helpers/createGraphqlServer';
 
 test('test GraphQL server', async (t) => {
-  const graphqlServer = await createGraphqlServer({
+  const schema = makeExecutableSchema({
     resolvers: {
       Query: {
         foo: () => {
@@ -19,6 +20,10 @@ test('test GraphQL server', async (t) => {
         foo: String
       }
     `,
+  });
+
+  const graphqlServer = await createGraphqlServer({
+    schema,
   });
 
   const response = await request(graphqlServer.url, gql`
