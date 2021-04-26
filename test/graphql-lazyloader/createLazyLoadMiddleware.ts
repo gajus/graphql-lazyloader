@@ -324,3 +324,53 @@ test('batches multiple requests', async (t) => {
 
   t.is(lazyLoad.callCount, 1);
 });
+
+test('root is null if element does not exist', async (t) => {
+  const lazyLoad = sinon
+    .stub()
+    .returns(null);
+
+  const schema = createSchemaWithMiddleware({
+    lazyLoadMap: {
+      Foo: lazyLoad,
+    },
+    resolvers: {
+      Query: {
+        foo: () => {
+          return {
+            id: '1',
+          };
+        },
+      },
+    },
+    typeDefs: gql`
+      type Foo {
+        id: ID!
+        name: String!
+      }
+
+      type Query {
+        foo: Foo
+      }
+    `,
+  });
+
+  const graphqlServer = await createGraphqlServer({
+    schema,
+  });
+
+  const response = await request(graphqlServer.url, gql`
+    {
+      foo {
+        id
+        name
+      }
+    }
+  `);
+
+  t.deepEqual(response, {
+    foo: null,
+  });
+
+  await graphqlServer.stop();
+});
