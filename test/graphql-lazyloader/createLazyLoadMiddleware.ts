@@ -196,7 +196,7 @@ test('does not lazy load if resolver only accesses id', async (t) => {
     },
     resolvers: {
       Foo: {
-        name: (node: any) => {
+        description: (node: any) => {
           return `only depends on id ${node.id}`;
         },
       },
@@ -212,6 +212,7 @@ test('does not lazy load if resolver only accesses id', async (t) => {
       type Foo {
         id: ID!
         name: String!
+        description: String!
       }
 
       type Query {
@@ -228,7 +229,7 @@ test('does not lazy load if resolver only accesses id', async (t) => {
     {
       foo {
         id
-        name
+        description
       }
     }
   `);
@@ -236,7 +237,7 @@ test('does not lazy load if resolver only accesses id', async (t) => {
   t.deepEqual(response, {
     foo: {
       id: '1',
-      name: 'only depends on id 1',
+      description: 'only depends on id 1',
     },
   });
 
