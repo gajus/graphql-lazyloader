@@ -185,6 +185,66 @@ test('respects the original resolver', async (t) => {
   await graphqlServer.stop();
 });
 
+test('does not lazy load if resolver only accesses id', async (t) => {
+  const lazyLoad = sinon
+    .stub()
+    .throws();
+
+  const schema = createSchemaWithMiddleware({
+    lazyLoadMap: {
+      Foo: lazyLoad,
+    },
+    resolvers: {
+      Foo: {
+        name: (node: any) => {
+          return `only depends on id ${node.id}`;
+        },
+      },
+      Query: {
+        foo: () => {
+          return {
+            id: '1',
+          };
+        },
+      },
+    },
+    typeDefs: gql`
+      type Foo {
+        id: ID!
+        name: String!
+      }
+
+      type Query {
+        foo: Foo!
+      }
+    `,
+  });
+
+  const graphqlServer = await createGraphqlServer({
+    schema,
+  });
+
+  const response = await request(graphqlServer.url, gql`
+    {
+      foo {
+        id
+        name
+      }
+    }
+  `);
+
+  t.deepEqual(response, {
+    foo: {
+      id: '1',
+      name: 'only depends on id 1',
+    },
+  });
+
+  await graphqlServer.stop();
+
+  t.is(lazyLoad.callCount, 0);
+});
+
 test('does not fetch already available data', async (t) => {
   const lazyLoad = sinon
     .stub()
