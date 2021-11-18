@@ -1,9 +1,11 @@
 import {
-  gql,
   makeExecutableSchema,
-} from 'apollo-server-express';
+} from '@graphql-tools/schema';
 import test from 'ava';
 import request from 'graphql-request';
+import {
+  gql,
+} from 'graphql-tag';
 import createGraphqlServer from '../helpers/createGraphqlServer';
 
 test('test GraphQL server', async (t) => {

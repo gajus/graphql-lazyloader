@@ -1,37 +1,37 @@
+import http from 'http';
+import {
+  ApolloServerPluginDrainHttpServer,
+} from 'apollo-server-core';
 import {
   ApolloServer,
 } from 'apollo-server-express';
 import express from 'express';
-import {
-  createHttpTerminator,
-} from 'http-terminator';
 
 export default async ({schema}: any) => {
-  const apolloServer = new ApolloServer({
+  const app = express();
+  const httpServer = http.createServer(app);
+  const server = new ApolloServer({
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
     schema,
   });
 
-  const expressApp = express();
+  await server.start();
 
-  apolloServer.applyMiddleware({
-    app: expressApp,
+  server.applyMiddleware({
+    app,
   });
 
-  const httpServer: any = await new Promise((resolve) => {
-    // eslint-disable-next-line @typescript-eslint/naming-convention, id-match
-    const httpServer_ = expressApp.listen(() => {
-      resolve(httpServer_);
-    });
+  await new Promise<void>((resolve) => {
+    httpServer.listen(resolve);
   });
 
-  const httpTerminator = createHttpTerminator({
-    server: httpServer,
-  });
+  // @ts-expect-error lazy
+  const {port} = httpServer.address();
 
   return {
     stop: () => {
-      return httpTerminator.terminate();
+      return server.stop();
     },
-    url: 'http://127.0.0.1:' + httpServer.address().port + apolloServer.graphqlPath,
+    url: 'http://127.0.0.1:' + port + server.graphqlPath,
   };
 };

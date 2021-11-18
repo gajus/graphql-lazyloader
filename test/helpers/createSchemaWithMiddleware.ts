@@ -1,6 +1,6 @@
 import {
   makeExecutableSchema,
-} from 'apollo-server-express';
+} from '@graphql-tools/schema';
 import {
   applyMiddleware,
 } from 'graphql-middleware';

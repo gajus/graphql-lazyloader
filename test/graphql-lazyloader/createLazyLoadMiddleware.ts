@@ -1,10 +1,10 @@
-import {
-  gql,
-} from 'apollo-server-express';
 import test from 'ava';
 import DataLoader from 'dataloader';
 import request from 'graphql-request';
-import sinon from 'sinon';
+import {
+  gql,
+} from 'graphql-tag';
+import * as sinon from 'sinon';
 import createGraphqlServer from '../helpers/createGraphqlServer';
 import createSchemaWithMiddleware from '../helpers/createSchemaWithMiddleware';
 
